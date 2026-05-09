@@ -2,19 +2,17 @@ const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const multer = require("multer"); // TAMBAHAN: Untuk handle upload file
-const path = require("path"); // TAMBAHAN: Untuk urusan path/lokasi folder
+const multer = require("multer");
+const path = require("path");
 
 const app = express();
 
-// Middleware
+// ─── MIDDLEWARE ───────────────────────────────────────────────────────────────
 app.use(cors());
 app.use(bodyParser.json());
-
-// TAMBAHAN: Membuat folder uploads bisa diakses oleh React untuk menampilkan gambar
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
-// Konfigurasi koneksi ke database
+// ─── KONEKSI DATABASE ─────────────────────────────────────────────────────────
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -30,23 +28,21 @@ db.connect((err) => {
   }
 });
 
-// --- KONFIGURASI MULTER (PENYIMPANAN GAMBAR) ---
+// ─── KONFIGURASI MULTER ───────────────────────────────────────────────────────
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Gambar akan disimpan di folder "public/uploads" di dalam folder backend
     cb(null, "public/uploads");
   },
   filename: (req, file, cb) => {
-    // Mengubah nama file agar unik (menambahkan angka timestamp di depannya)
-    // Contoh: 16987654321-kursi_jati.jpg
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
 const upload = multer({ storage: storage });
 
-// --- JALUR API (ENDPOINT) ---
+// ==========================================
+// API LOGIN
+// ==========================================
 
-// 1. API Login
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body;
   const sql = "SELECT * FROM user WHERE username = ? AND password = ?";
@@ -64,55 +60,12 @@ app.post("/api/login", (req, res) => {
   });
 });
 
-// 2. API Tambah Produk (Gallery)
-// upload.single("image") artinya kita menerima 1 file dengan nama field "image" dari React
-app.post("/api/products", upload.single("image"), (req, res) => {
-  // Jika admin lupa upload gambar
-  if (!req.file) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Gambar harus diupload!" });
-  }
+// ==========================================
+// API PRODUCTS
+// ==========================================
 
-  // Mengambil data teks yang dikirim dari form Admin Panel
-  const { product_code, title, category, sub_category, description } = req.body;
-
-  // Mengambil nama file gambar yang baru saja disimpan oleh multer
-  const image_url = req.file.filename;
-
-  // Menyimpan semuanya ke database MySQL
-  const sql = `INSERT INTO products (product_code, title, category, sub_category, image_url, description) 
-               VALUES (?, ?, ?, ?, ?, ?)`;
-
-  db.query(
-    sql,
-    [product_code, title, category, sub_category, image_url, description],
-    (err, result) => {
-      if (err) {
-        console.error("Error SQL:", err);
-        // Cek jika error karena kode produk ganda (UNIQUE)
-        if (err.code === "ER_DUP_ENTRY") {
-          return res
-            .status(400)
-            .json({ success: false, message: "Kode Barang sudah dipakai!" });
-        }
-        return res.status(500).json({
-          success: false,
-          message: "Gagal menyimpan data ke database.",
-        });
-      }
-
-      res.json({
-        success: true,
-        message: "Produk berhasil ditambahkan ke Gallery!",
-      });
-    },
-  );
-});
-
-// 3. API Ambil Semua Produk (Untuk ditampilkan di Tabel)
+// 1. Ambil semua produk
 app.get("/api/products", (req, res) => {
-  // Mengambil semua data produk dari yang paling baru (ORDER BY id DESC)
   const sql = "SELECT * FROM products ORDER BY id DESC";
 
   db.query(sql, (err, results) => {
@@ -126,13 +79,114 @@ app.get("/api/products", (req, res) => {
   });
 });
 
+// 2. Tambah produk baru
+app.post("/api/products", upload.single("image"), (req, res) => {
+  if (!req.file) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Gambar harus diupload!" });
+  }
+
+  const { product_code, title, category, sub_category, description } = req.body;
+  const image_url = req.file.filename;
+
+  const sql = `INSERT INTO products (product_code, title, category, sub_category, image_url, description) 
+               VALUES (?, ?, ?, ?, ?, ?)`;
+
+  db.query(
+    sql,
+    [product_code, title, category, sub_category, image_url, description],
+    (err, result) => {
+      if (err) {
+        console.error("Error SQL:", err);
+        if (err.code === "ER_DUP_ENTRY") {
+          return res
+            .status(400)
+            .json({ success: false, message: "Kode Barang sudah dipakai!" });
+        }
+        return res
+          .status(500)
+          .json({
+            success: false,
+            message: "Gagal menyimpan data ke database.",
+          });
+      }
+      res.json({
+        success: true,
+        message: "Produk berhasil ditambahkan ke Gallery!",
+      });
+    },
+  );
+});
+
+// 3. Edit produk
+app.put("/api/products/:id", upload.single("image"), (req, res) => {
+  const { id } = req.params;
+  const { product_code, title, category, sub_category, description } = req.body;
+
+  let sql, params;
+
+  if (req.file) {
+    sql = `UPDATE products SET product_code=?, title=?, category=?, sub_category=?, description=?, image_url=? WHERE id=?`;
+    params = [
+      product_code,
+      title,
+      category,
+      sub_category,
+      description,
+      req.file.filename,
+      id,
+    ];
+  } else {
+    sql = `UPDATE products SET product_code=?, title=?, category=?, sub_category=?, description=? WHERE id=?`;
+    params = [product_code, title, category, sub_category, description, id];
+  }
+
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      console.error("Error edit produk:", err);
+      if (err.code === "ER_DUP_ENTRY") {
+        return res
+          .status(400)
+          .json({ success: false, message: "Kode Barang sudah dipakai!" });
+      }
+      return res
+        .status(500)
+        .json({ success: false, message: "Gagal mengupdate produk" });
+    }
+    res.json({ success: true, message: "Produk berhasil diperbarui!" });
+  });
+});
+
+// 4. Hapus produk
+app.delete("/api/products/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM products WHERE id = ?";
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error("Error hapus produk:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Gagal menghapus produk" });
+    }
+    if (result.affectedRows === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Produk tidak ditemukan" });
+    }
+    res.json({ success: true, message: "Produk berhasil dihapus!" });
+  });
+});
+
 // ==========================================
-// API UNTUK HALAMAN HOME (home_contents)
+// API HOME CONTENTS
 // ==========================================
 
-// 1. Ambil Semua Data Home
+// 1. Ambil semua data home
 app.get("/api/home-contents", (req, res) => {
   const sql = "SELECT * FROM home_contents";
+
   db.query(sql, (err, results) => {
     if (err) {
       console.error("Error ambil data home:", err);
@@ -144,8 +198,7 @@ app.get("/api/home-contents", (req, res) => {
   });
 });
 
-// 2. Update Data Home (Bisa Teks atau Gambar)
-// Kita menggunakan upload.single("image") dari Multer yang sudah kamu buat sebelumnya
+// 2. Update data home (teks atau gambar)
 app.post("/api/home-contents/update", upload.single("image"), (req, res) => {
   const { content_type, text_value } = req.body;
 
@@ -158,14 +211,10 @@ app.post("/api/home-contents/update", upload.single("image"), (req, res) => {
   let sql = "";
   let queryParams = [];
 
-  // Jika user mengupload gambar baru
   if (req.file) {
-    const imageUrl = req.file.filename;
     sql = "UPDATE home_contents SET image_url = ? WHERE content_type = ?";
-    queryParams = [imageUrl, content_type];
-  }
-  // Jika user hanya mengupdate teks
-  else if (text_value !== undefined) {
+    queryParams = [req.file.filename, content_type];
+  } else if (text_value !== undefined) {
     sql = "UPDATE home_contents SET text_value = ? WHERE content_type = ?";
     queryParams = [text_value, content_type];
   } else {
@@ -186,13 +235,14 @@ app.post("/api/home-contents/update", upload.single("image"), (req, res) => {
 });
 
 // ==========================================
-// API UNTUK SLIDER GAMBAR HOME (home_sliders)
+// API HOME SLIDERS
 // ==========================================
 
-// 1. UPDATE: Ambil semua gambar slider (Sekarang diurutkan berdasarkan sort_order)
+// 1. Ambil semua slider
 app.get("/api/home-sliders", (req, res) => {
   const sql =
     "SELECT * FROM home_sliders ORDER BY sort_order ASC, created_at DESC";
+
   db.query(sql, (err, results) => {
     if (err)
       return res
@@ -202,9 +252,40 @@ app.get("/api/home-sliders", (req, res) => {
   });
 });
 
-// 2. TAMBAH BARU: API untuk menyimpan ulang urutan (Drag & Drop)
+// 2. Upload gambar slider (bisa multiple)
+app.post("/api/home-sliders", upload.array("images", 10), (req, res) => {
+  const { slider_type } = req.body;
+  const files = req.files;
+
+  if (!slider_type)
+    return res
+      .status(400)
+      .json({ success: false, message: "slider_type wajib diisi!" });
+  if (!files || files.length === 0)
+    return res
+      .status(400)
+      .json({ success: false, message: "Tidak ada gambar yang diupload" });
+
+  const values = files.map((file) => [slider_type, file.filename]);
+  const sql = "INSERT INTO home_sliders (slider_type, image_url) VALUES ?";
+
+  db.query(sql, [values], (err, result) => {
+    if (err) {
+      console.error("Error upload slider:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Gagal menyimpan ke database" });
+    }
+    res.json({
+      success: true,
+      message: `Berhasil mengupload ${files.length} gambar ke ${slider_type}`,
+    });
+  });
+});
+
+// 3. Update urutan slider (drag & drop)
 app.put("/api/home-sliders/reorder", async (req, res) => {
-  const { reorderedItems } = req.body; // Menerima array: [{id: 1, sort_order: 0}, {id: 2, sort_order: 1}]
+  const { reorderedItems } = req.body;
 
   if (!reorderedItems || !Array.isArray(reorderedItems)) {
     return res
@@ -213,7 +294,6 @@ app.put("/api/home-sliders/reorder", async (req, res) => {
   }
 
   try {
-    // Kita gunakan Promise.all untuk menjalankan update pada beberapa baris secara bersamaan
     const updatePromises = reorderedItems.map((item) => {
       return new Promise((resolve, reject) => {
         db.query(
@@ -237,41 +317,7 @@ app.put("/api/home-sliders/reorder", async (req, res) => {
   }
 });
 
-// 3. Upload gambar slider (Bisa Multiple)
-// Menggunakan upload.array("images", 10) -> Maksimal 10 gambar sekali upload
-app.post("/api/home-sliders", upload.array("images", 10), (req, res) => {
-  const { slider_type } = req.body;
-  const files = req.files;
-
-  if (!slider_type)
-    return res
-      .status(400)
-      .json({ success: false, message: "slider_type wajib diisi!" });
-  if (!files || files.length === 0)
-    return res
-      .status(400)
-      .json({ success: false, message: "Tidak ada gambar yang diupload" });
-
-  // Siapkan data untuk query bulk insert (memasukkan banyak baris sekaligus)
-  // Menambahkan default sort_order 0 (atau sesuaikan) di tabel database
-  const values = files.map((file) => [slider_type, file.filename]);
-  const sql = "INSERT INTO home_sliders (slider_type, image_url) VALUES ?";
-
-  db.query(sql, [values], (err, result) => {
-    if (err) {
-      console.error("Error upload slider:", err);
-      return res
-        .status(500)
-        .json({ success: false, message: "Gagal menyimpan ke database" });
-    }
-    res.json({
-      success: true,
-      message: `Berhasil mengupload ${files.length} gambar ke ${slider_type}`,
-    });
-  });
-});
-
-// 4. Hapus 1 gambar slider
+// 4. Hapus gambar slider
 app.delete("/api/home-sliders/:id", (req, res) => {
   const { id } = req.params;
   const sql = "DELETE FROM home_sliders WHERE id = ?";
@@ -286,10 +332,10 @@ app.delete("/api/home-sliders/:id", (req, res) => {
 });
 
 // ==========================================
-// API UNTUK OUR PROJECT GALLERY
+// API OUR PROJECT GALLERY
 // ==========================================
 
-// 1. Ambil semua data project
+// 1. Ambil semua project
 app.get("/api/projects", (req, res) => {
   db.query("SELECT * FROM projects ORDER BY id DESC", (err, results) => {
     if (err)
@@ -298,7 +344,7 @@ app.get("/api/projects", (req, res) => {
   });
 });
 
-// 2. Tambah project baru (Gambar + Judul + Info)
+// 2. Tambah project baru
 app.post("/api/projects", upload.single("image"), (req, res) => {
   const { title, description } = req.body;
   const imageUrl = req.file ? req.file.filename : null;
@@ -328,7 +374,7 @@ app.delete("/api/projects/:id", (req, res) => {
   });
 });
 
-// Menyalakan server
+// ─── JALANKAN SERVER ──────────────────────────────────────────────────────────
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server Backend berjalan di http://localhost:${PORT}`);

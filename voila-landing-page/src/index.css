@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Target slide sebelumnya di korsel kategori */
+.swiper-container .CAT_SWIPER_SLIDE.swiper-slide-prev {
+  opacity: 0.5;
+}
