@@ -104,12 +104,10 @@ app.post("/api/products", upload.single("image"), (req, res) => {
             .status(400)
             .json({ success: false, message: "Kode Barang sudah dipakai!" });
         }
-        return res
-          .status(500)
-          .json({
-            success: false,
-            message: "Gagal menyimpan data ke database.",
-          });
+        return res.status(500).json({
+          success: false,
+          message: "Gagal menyimpan data ke database.",
+        });
       }
       res.json({
         success: true,
@@ -371,6 +369,87 @@ app.delete("/api/projects/:id", (req, res) => {
     if (err)
       return res.status(500).json({ success: false, error: err.message });
     res.json({ success: true, message: "Project berhasil dihapus!" });
+  });
+});
+
+// ==========================================
+// API CATALOG REQUESTS ✅ BARU
+// ==========================================
+
+// 1. Simpan data form & trigger download katalog
+app.post("/api/catalog-requests", (req, res) => {
+  const { name, email, message } = req.body;
+
+  if (!name || !email || !message) {
+    return res.status(400).json({
+      success: false,
+      message: "Nama, email, dan pesan wajib diisi!",
+    });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({
+      success: false,
+      message: "Format email tidak valid!",
+    });
+  }
+
+  const sql = `INSERT INTO catalog_requests (name, email, message) VALUES (?, ?, ?)`;
+
+  db.query(sql, [name.trim(), email.trim(), message.trim()], (err, result) => {
+    if (err) {
+      console.error("Error simpan catalog request:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Gagal menyimpan data ke database.",
+      });
+    }
+    console.log(`📩 Catalog request baru dari: ${email}`);
+    res.json({
+      success: true,
+      message: "Data berhasil disimpan! Katalog siap diunduh.",
+      id: result.insertId,
+    });
+  });
+});
+
+// 2. Ambil semua catalog requests (untuk Admin Panel)
+app.get("/api/catalog-requests", (req, res) => {
+  const sql = "SELECT * FROM catalog_requests ORDER BY created_at DESC";
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error ambil catalog requests:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Gagal mengambil data",
+      });
+    }
+    res.json({ success: true, data: results });
+  });
+});
+
+// 3. Hapus satu catalog request (dari Admin Panel)
+app.delete("/api/catalog-requests/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM catalog_requests WHERE id = ?";
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error("Error hapus catalog request:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Gagal menghapus data",
+      });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Data tidak ditemukan",
+      });
+    }
+    res.json({ success: true, message: "Data berhasil dihapus!" });
   });
 });
 

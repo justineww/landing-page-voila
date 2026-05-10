@@ -10,6 +10,7 @@ const AdminLayout = () => {
     { name: "About Us Panel", path: "/admin/about" },
     { name: "Our Project Panel", path: "/admin/project" },
     { name: "Contact Us Panel", path: "/admin/contact" },
+    { name: "Customer Panel", path: "/admin/customers" }, // ✅ DITAMBAHKAN
     { name: "Indoor Panel", path: "/admin/indoor" },
     { name: "Outdoor Panel", path: "/admin/outdoor" },
     { name: "Craft Panel", path: "/admin/craft" },
@@ -62,7 +63,6 @@ const AdminLayout = () => {
       {/* KONTEN DINAMIS */}
       <main className="flex-1 ml-64 p-8 overflow-y-auto min-h-screen">
         <div className="max-w-5xl mx-auto">
-          {/* Outlet adalah tempat di mana React Router merender komponen child (panel) */}
           <Outlet />
         </div>
       </main>

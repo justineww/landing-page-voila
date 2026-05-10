@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-// 1. IMPORT Link dan useLocation dari react-router-dom
 import { Link, useLocation } from "react-router-dom";
 import VoilaHorizontal from "../storage/LogoVoilaHorizontal.png";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  // 2. DAPATKAN LOKASI HALAMAN SAAT INI
   const location = useLocation();
 
   useEffect(() => {
@@ -18,43 +16,29 @@ const Header = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  // 3. FUNGSI UNTUK MENENTUKAN KELAS CSS HEADER SECARA DINAMIS
-  const getHeaderClass = () => {
-    // Tentukan apakah kita berada di halaman Koleksi (Indoor/Outdoor/Craft)
-    const isCollectionPage =
-      location.pathname.startsWith("/indoor") ||
-      location.pathname.startsWith("/outdoor") ||
-      location.pathname.startsWith("/craft");
-
-    // JIKA DI HALAMAN KOLEKSI:
-    // Abaikan scroll, langsung berikan background cokelat solid & py-4 (lebih ramping)
-    if (isCollectionPage) {
-      return "shadow-md";
-    }
-
-    // JIKA DI HALAMAN LAIN (MISAL HOME):
-    // Gunakan logika scroll yang sudah ada
-    return isScrolled
-      ? "backdrop-blur-md shadow-md" // Saat scroll
-      : "bg-transparent"; // Saat di atas: Transparan
-  };
-
-  // Tentukan apakah nav-bar pill harus selalu tampil solid
-  const isCollectionPage =
+  // ✅ Halaman yang selalu pakai header solid (tidak transparan)
+  const isSolidPage =
     location.pathname.startsWith("/indoor") ||
     location.pathname.startsWith("/outdoor") ||
-    location.pathname.startsWith("/craft");
+    location.pathname.startsWith("/craft") ||
+    location.pathname.startsWith("/contact"); // ✅ DITAMBAHKAN
+
+  const getHeaderClass = () => {
+    if (isSolidPage) {
+      return "shadow-md";
+    }
+    return isScrolled ? "backdrop-blur-md shadow-md" : "bg-transparent";
+  };
 
   const navItems = [
     { label: "Home", to: "/" },
     { label: "Indoor", to: "/indoor" },
-    { label: "Outdor", to: "/outdoor" },
+    { label: "Outdoor", to: "/outdoor" }, // ✅ typo "Outdor" diperbaiki
     { label: "Craft", to: "/craft" },
     { label: "Contact", to: "/contact" },
   ];
@@ -88,7 +72,7 @@ const Header = () => {
           </div>
         </Link>
 
-        {/* NAVIGASI — pill dengan background tan/beige */}
+        {/* NAVIGASI */}
         <nav className="hidden md:flex items-center rounded-sm overflow-hidden shadow-md">
           {navItems.map((item, index) => {
             const isActive =
@@ -110,7 +94,6 @@ const Header = () => {
                 >
                   {item.label}
                 </Link>
-                {/* Separator vertikal antar item */}
                 {index < navItems.length - 1 && (
                   <div
                     className="w-px self-stretch"
