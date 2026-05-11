@@ -47,3 +47,4 @@ voila-backend/temp/
 *.njsproj
 *.sln
 *.swp
+*.sql
