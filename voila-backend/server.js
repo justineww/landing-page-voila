@@ -103,12 +103,10 @@ app.post("/api/products", upload.single("image"), (req, res) => {
             .status(400)
             .json({ success: false, message: "Kode Barang sudah dipakai!" });
         }
-        return res
-          .status(500)
-          .json({
-            success: false,
-            message: "Gagal menyimpan data ke database.",
-          });
+        return res.status(500).json({
+          success: false,
+          message: "Gagal menyimpan data ke database.",
+        });
       }
       res.json({
         success: true,
@@ -435,7 +433,7 @@ app.delete("/api/catalog-requests/:id", (req, res) => {
 });
 
 // ─── JALANKAN SERVER ──────────────────────────────────────────────────────────
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`🚀 Server Backend berjalan di port ${PORT}`);
 });
