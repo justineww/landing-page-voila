@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+const API_BASE = process.env.REACT_APP_API_URL;
 
 const AboutPanel = () => {
   const [aboutText, setAboutText] = useState("");
@@ -6,7 +7,7 @@ const AboutPanel = () => {
 
   const fetchData = async () => {
     try {
-      const resText = await fetch("http://localhost:5000/api/home-contents");
+      const resText = await fetch(`${API_BASE}/api/home-contents`);
       const dataText = await resText.json();
       if (dataText.success) {
         // Gunakan content_type "about_us" sesuai database
@@ -14,7 +15,7 @@ const AboutPanel = () => {
         if (item) setAboutText(item.text_value || "");
       }
 
-      const resSlider = await fetch("http://localhost:5000/api/home-sliders");
+      const resSlider = await fetch(`${API_BASE}/api/home-sliders`);
       const dataSlider = await resSlider.json();
       if (dataSlider.success) setSliders(dataSlider.data);
     } catch (error) {
@@ -32,7 +33,7 @@ const AboutPanel = () => {
     data.append("content_type", "about_us"); // sesuai database
     data.append("text_value", aboutText);
 
-    const res = await fetch("http://localhost:5000/api/home-contents/update", {
+    const res = await fetch(`${API_BASE}/api/home-contents/update`, {
       method: "POST",
       body: data,
     });
@@ -52,7 +53,7 @@ const AboutPanel = () => {
       data.append("images", fileInput.files[i]);
     }
 
-    const res = await fetch("http://localhost:5000/api/home-sliders", {
+    const res = await fetch(`${API_BASE}/api/home-sliders`, {
       method: "POST",
       body: data,
     });
@@ -66,7 +67,7 @@ const AboutPanel = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Hapus gambar ini?")) return;
-    const res = await fetch(`http://localhost:5000/api/home-sliders/${id}`, {
+    const res = await fetch(`${API_BASE}/api/home-sliders/${id}`, {
       method: "DELETE",
     });
     const result = await res.json();
@@ -90,7 +91,7 @@ const AboutPanel = () => {
       sort_order: index,
     }));
 
-    await fetch("http://localhost:5000/api/home-sliders/reorder", {
+    await fetch(`${API_BASE}/api/home-sliders/reorder`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reorderedItems: reorderedData }),
@@ -178,7 +179,7 @@ const AboutPanel = () => {
               className="relative group cursor-move"
             >
               <img
-                src={`http://localhost:5000/uploads/${img.image_url}`}
+                src={`${API_BASE}/uploads/${img.image_url}`}
                 className="w-full h-28 object-cover rounded border"
                 alt="Gallery"
               />
@@ -237,7 +238,7 @@ const AboutPanel = () => {
               className="relative group cursor-move"
             >
               <img
-                src={`http://localhost:5000/uploads/${img.image_url}`}
+                src={`${API_BASE}/uploads/${img.image_url}`}
                 className="w-full h-40 object-cover rounded border"
                 alt="Side"
               />

@@ -10,7 +10,7 @@ const CustomerPanel = () => {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/catalog-requests");
+      const res = await fetch(`${API_BASE}/api/catalog-requests`);
       const data = await res.json();
       if (data.success) setRequests(data.data);
     } catch (error) {
@@ -28,10 +28,9 @@ const CustomerPanel = () => {
     if (!window.confirm("Yakin ingin menghapus data ini?")) return;
     setDeletingId(id);
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/catalog-requests/${id}`,
-        { method: "DELETE" },
-      );
+      const res = await fetch(`${API_BASE}/api/catalog-requests/${id}`, {
+        method: "DELETE",
+      });
       const data = await res.json();
       if (data.success) {
         setRequests((prev) => prev.filter((r) => r.id !== id));

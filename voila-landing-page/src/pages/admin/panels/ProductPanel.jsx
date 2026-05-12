@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+const API_BASE = process.env.REACT_APP_API_URL;
+
 const ProductPanel = ({ category }) => {
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({
@@ -30,7 +32,7 @@ const ProductPanel = ({ category }) => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/products");
+      const response = await fetch(`${API_BASE}/api/products`);
       const result = await response.json();
       if (result.success) {
         setProducts(result.data);
@@ -66,7 +68,7 @@ const ProductPanel = ({ category }) => {
     data.append("image", formData.image);
 
     try {
-      const response = await fetch("http://localhost:5000/api/products", {
+      const response = await fetch(`${API_BASE}/api/products`, {
         method: "POST",
         body: data,
       });
@@ -128,13 +130,10 @@ const ProductPanel = ({ category }) => {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/products/${editData.id}`,
-        {
-          method: "PUT",
-          body: data,
-        },
-      );
+      const response = await fetch(`${API_BASE}/api/products/${editData.id}`, {
+        method: "PUT",
+        body: data,
+      });
       const result = await response.json();
 
       if (result.success) {
@@ -169,7 +168,7 @@ const ProductPanel = ({ category }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/products/${deleteTarget.id}`,
+        `${API_BASE}/api/products/${deleteTarget.id}`,
         { method: "DELETE" },
       );
       const result = await response.json();
@@ -343,7 +342,7 @@ const ProductPanel = ({ category }) => {
                     <td className="p-4 text-sm text-gray-500">#{item.id}</td>
                     <td className="p-4">
                       <img
-                        src={`http://localhost:5000/uploads/${item.image_url}`}
+                        src={`${API_BASE}/uploads/${item.image_url}`}
                         alt={item.title}
                         className="w-16 h-16 object-cover rounded border border-gray-200 shadow-sm"
                       />
@@ -496,7 +495,7 @@ const ProductPanel = ({ category }) => {
                     src={
                       editImage
                         ? URL.createObjectURL(editImage)
-                        : `http://localhost:5000/uploads/${editData.image_url}`
+                        : `${API_BASE}/uploads/${editData.image_url}`
                     }
                     alt="preview"
                     className="w-24 h-24 object-cover rounded border border-gray-200 shadow-sm"

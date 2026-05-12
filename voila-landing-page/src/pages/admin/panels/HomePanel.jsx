@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
+const API_BASE = process.env.REACT_APP_API_URL;
+
 const HomePanel = () => {
   // ==========================================
   // STATE & FUNGSI UNTUK HOME PANEL (TEKS)
@@ -16,7 +18,7 @@ const HomePanel = () => {
 
   const fetchHomeContents = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/home-contents");
+      const response = await fetch(`${API_BASE}/api/home-contents`);
       const result = await response.json();
       if (result.success) {
         const texts = { welcome_heading: "", welcome_paragraph: "" };
@@ -56,13 +58,10 @@ const HomePanel = () => {
     }
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/home-contents/update",
-        {
-          method: "POST",
-          body: data,
-        },
-      );
+      const response = await fetch(`${API_BASE}/api/home-contents/update`, {
+        method: "POST",
+        body: data,
+      });
       const result = await response.json();
 
       if (result.success) {
@@ -87,7 +86,7 @@ const HomePanel = () => {
 
   const fetchSliders = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/home-sliders");
+      const response = await fetch(`${API_BASE}/api/home-sliders`);
       const result = await response.json();
       if (result.success) setSliders(result.data);
     } catch (error) {
@@ -109,7 +108,7 @@ const HomePanel = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/home-sliders", {
+      const response = await fetch(`${API_BASE}/api/home-sliders`, {
         method: "POST",
         body: data,
       });
@@ -129,12 +128,9 @@ const HomePanel = () => {
   const handleDeleteSlider = async (id) => {
     if (!window.confirm("Yakin ingin menghapus gambar ini?")) return;
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/home-sliders/${id}`,
-        {
-          method: "DELETE",
-        },
-      );
+      const response = await fetch(`${API_BASE}/api/home-sliders/${id}`, {
+        method: "DELETE",
+      });
       const result = await response.json();
       if (result.success) fetchSliders();
     } catch (error) {
@@ -168,7 +164,7 @@ const HomePanel = () => {
     }));
 
     try {
-      await fetch("http://localhost:5000/api/home-sliders/reorder", {
+      await fetch(`${API_BASE}/api/home-sliders/reorder`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reorderedItems: reorderedData }),
@@ -239,7 +235,7 @@ const HomePanel = () => {
                 className="relative group cursor-move hover:scale-[1.02] transition-transform"
               >
                 <img
-                  src={`http://localhost:5000/uploads/${item.image_url}`}
+                  src={`${API_BASE}/uploads/${item.image_url}`}
                   alt="Banner"
                   className="w-full h-32 object-cover rounded border"
                 />
@@ -365,7 +361,7 @@ const HomePanel = () => {
                 className="relative group cursor-move hover:scale-[1.02] transition-transform"
               >
                 <img
-                  src={`http://localhost:5000/uploads/${item.image_url}`}
+                  src={`${API_BASE}/uploads/${item.image_url}`}
                   alt="Side"
                   className="w-full h-32 object-contain bg-gray-50 rounded border"
                 />

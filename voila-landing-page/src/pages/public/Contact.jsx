@@ -53,7 +53,7 @@ export default function Contact() {
     }
     setStatus("loading");
     try {
-      const res = await fetch("http://localhost:5000/api/catalog-requests", {
+      const res = await fetch(`${API_BASE}/api/catalog-requests`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

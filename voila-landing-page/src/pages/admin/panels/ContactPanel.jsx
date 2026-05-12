@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+const API_BASE = process.env.REACT_APP_API_URL;
+
 const ContactPanel = () => {
   // State untuk Data Teks Kontak
   const [texts, setTexts] = useState({
@@ -18,7 +20,7 @@ const ContactPanel = () => {
   const fetchData = async () => {
     try {
       // Ambil Teks Kontak
-      const resTexts = await fetch("http://localhost:5000/api/home-contents");
+      const resTexts = await fetch(`${API_BASE}/api/home-contents`);
       const dataTexts = await resTexts.json();
       if (dataTexts.success) {
         const textObj = {};
@@ -31,7 +33,7 @@ const ContactPanel = () => {
       }
 
       // Ambil Gambar Contact
-      const resSlider = await fetch("http://localhost:5000/api/home-sliders");
+      const resSlider = await fetch(`${API_BASE}/api/home-sliders`);
       const dataSlider = await resSlider.json();
       if (dataSlider.success) {
         const img = dataSlider.data.find(
@@ -57,7 +59,7 @@ const ContactPanel = () => {
         const data = new FormData();
         data.append("content_type", key);
         data.append("text_value", texts[key]);
-        await fetch("http://localhost:5000/api/home-contents/update", {
+        await fetch(`${API_BASE}/api/home-contents/update`, {
           method: "POST",
           body: data,
         });
@@ -81,7 +83,7 @@ const ContactPanel = () => {
 
     // Jika sudah ada gambar sebelumnya, hapus dulu agar tetap jadi 1 gambar "still"
     if (contactImage) {
-      await fetch(`http://localhost:5000/api/home-sliders/${contactImage.id}`, {
+      await fetch(`${API_BASE}/api/home-sliders/${contactImage.id}`, {
         method: "DELETE",
       });
     }
@@ -90,7 +92,7 @@ const ContactPanel = () => {
     data.append("slider_type", "contact_image");
     data.append("images", fileInput.files[0]);
 
-    const res = await fetch("http://localhost:5000/api/home-sliders", {
+    const res = await fetch(`${API_BASE}/api/home-sliders`, {
       method: "POST",
       body: data,
     });
@@ -231,7 +233,7 @@ const ContactPanel = () => {
             </label>
             {contactImage ? (
               <img
-                src={`http://localhost:5000/uploads/${contactImage.image_url}`}
+                src={`${API_BASE}/uploads/${contactImage.image_url}`}
                 alt="Contact"
                 className="w-full max-h-64 object-cover rounded-lg border shadow-sm"
               />

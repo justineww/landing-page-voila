@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../../components/Header";
 
-const IMAGE_BASE_URL = "http://localhost:5000/uploads/";
+const IMAGE_BASE_URL = `${API_BASE}/uploads/`;
 
 const Craft = () => {
   const [products, setProducts] = useState([]);
@@ -13,7 +13,7 @@ const Craft = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/products");
+        const res = await fetch(`${API_BASE}/api/products`);
         const data = await res.json();
         if (data.success) {
           const craftProducts = data.data.filter(

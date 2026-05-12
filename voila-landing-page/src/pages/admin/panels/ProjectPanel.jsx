@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+const API_BASE = process.env.REACT_APP_API_URL;
+
 const ProjectPanel = () => {
   // State untuk Teks & Statistik
   const [texts, setTexts] = useState({
@@ -20,7 +22,7 @@ const ProjectPanel = () => {
   const fetchData = async () => {
     try {
       // Fetch Teks & Statistik
-      const resTexts = await fetch("http://localhost:5000/api/home-contents");
+      const resTexts = await fetch(`${API_BASE}/api/home-contents`);
       const dataTexts = await resTexts.json();
       if (dataTexts.success) {
         const textObj = {};
@@ -33,7 +35,7 @@ const ProjectPanel = () => {
       }
 
       // Fetch Projects Gallery
-      const resProj = await fetch("http://localhost:5000/api/projects");
+      const resProj = await fetch(`${API_BASE}/api/projects`);
       const dataProj = await resProj.json();
       if (dataProj.success) setProjects(dataProj.data);
     } catch (error) {
@@ -52,7 +54,7 @@ const ProjectPanel = () => {
     data.append("content_type", type);
     data.append("text_value", texts[type]);
 
-    const res = await fetch("http://localhost:5000/api/home-contents/update", {
+    const res = await fetch(`${API_BASE}/api/home-contents/update`, {
       method: "POST",
       body: data,
     });
@@ -75,7 +77,7 @@ const ProjectPanel = () => {
     data.append("title", newProject.title);
     data.append("description", newProject.description);
 
-    const res = await fetch("http://localhost:5000/api/projects", {
+    const res = await fetch(`${API_BASE}/api/projects`, {
       method: "POST",
       body: data,
     });
@@ -92,7 +94,7 @@ const ProjectPanel = () => {
   // Hapus Project
   const handleDeleteProject = async (id) => {
     if (!window.confirm("Hapus project ini?")) return;
-    const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
+    const res = await fetch(`${API_BASE}/api/projects/${id}`, {
       method: "DELETE",
     });
     const result = await res.json();
@@ -270,7 +272,7 @@ const ProjectPanel = () => {
               className="border rounded-lg overflow-hidden relative shadow-sm group"
             >
               <img
-                src={`http://localhost:5000/uploads/${proj.image_url}`}
+                src={`${API_BASE}/uploads/${proj.image_url}`}
                 className="w-full h-48 object-cover"
                 alt={proj.title}
               />
