@@ -14,17 +14,18 @@ app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 // ─── KONEKSI DATABASE ─────────────────────────────────────────────────────────
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "voila_db",
+  host: process.env.MYSQLHOST,
+  port: process.env.MYSQLPORT,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
 });
 
 db.connect((err) => {
   if (err) {
     console.error("❌ Gagal menyambung ke database:", err);
   } else {
-    console.log("✅ Mantap! Berhasil menyambung ke database voila_db!");
+    console.log("✅ Mantap! Berhasil menyambung ke database!");
   }
 });
 
@@ -64,7 +65,6 @@ app.post("/api/login", (req, res) => {
 // API PRODUCTS
 // ==========================================
 
-// 1. Ambil semua produk
 app.get("/api/products", (req, res) => {
   const sql = "SELECT * FROM products ORDER BY id DESC";
 
@@ -79,7 +79,6 @@ app.get("/api/products", (req, res) => {
   });
 });
 
-// 2. Tambah produk baru
 app.post("/api/products", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res
@@ -104,10 +103,12 @@ app.post("/api/products", upload.single("image"), (req, res) => {
             .status(400)
             .json({ success: false, message: "Kode Barang sudah dipakai!" });
         }
-        return res.status(500).json({
-          success: false,
-          message: "Gagal menyimpan data ke database.",
-        });
+        return res
+          .status(500)
+          .json({
+            success: false,
+            message: "Gagal menyimpan data ke database.",
+          });
       }
       res.json({
         success: true,
@@ -117,7 +118,6 @@ app.post("/api/products", upload.single("image"), (req, res) => {
   );
 });
 
-// 3. Edit produk
 app.put("/api/products/:id", upload.single("image"), (req, res) => {
   const { id } = req.params;
   const { product_code, title, category, sub_category, description } = req.body;
@@ -156,7 +156,6 @@ app.put("/api/products/:id", upload.single("image"), (req, res) => {
   });
 });
 
-// 4. Hapus produk
 app.delete("/api/products/:id", (req, res) => {
   const { id } = req.params;
   const sql = "DELETE FROM products WHERE id = ?";
@@ -181,7 +180,6 @@ app.delete("/api/products/:id", (req, res) => {
 // API HOME CONTENTS
 // ==========================================
 
-// 1. Ambil semua data home
 app.get("/api/home-contents", (req, res) => {
   const sql = "SELECT * FROM home_contents";
 
@@ -196,7 +194,6 @@ app.get("/api/home-contents", (req, res) => {
   });
 });
 
-// 2. Update data home (teks atau gambar)
 app.post("/api/home-contents/update", upload.single("image"), (req, res) => {
   const { content_type, text_value } = req.body;
 
@@ -236,7 +233,6 @@ app.post("/api/home-contents/update", upload.single("image"), (req, res) => {
 // API HOME SLIDERS
 // ==========================================
 
-// 1. Ambil semua slider
 app.get("/api/home-sliders", (req, res) => {
   const sql =
     "SELECT * FROM home_sliders ORDER BY sort_order ASC, created_at DESC";
@@ -250,7 +246,6 @@ app.get("/api/home-sliders", (req, res) => {
   });
 });
 
-// 2. Upload gambar slider (bisa multiple)
 app.post("/api/home-sliders", upload.array("images", 10), (req, res) => {
   const { slider_type } = req.body;
   const files = req.files;
@@ -281,7 +276,6 @@ app.post("/api/home-sliders", upload.array("images", 10), (req, res) => {
   });
 });
 
-// 3. Update urutan slider (drag & drop)
 app.put("/api/home-sliders/reorder", async (req, res) => {
   const { reorderedItems } = req.body;
 
@@ -315,7 +309,6 @@ app.put("/api/home-sliders/reorder", async (req, res) => {
   }
 });
 
-// 4. Hapus gambar slider
 app.delete("/api/home-sliders/:id", (req, res) => {
   const { id } = req.params;
   const sql = "DELETE FROM home_sliders WHERE id = ?";
@@ -333,7 +326,6 @@ app.delete("/api/home-sliders/:id", (req, res) => {
 // API OUR PROJECT GALLERY
 // ==========================================
 
-// 1. Ambil semua project
 app.get("/api/projects", (req, res) => {
   db.query("SELECT * FROM projects ORDER BY id DESC", (err, results) => {
     if (err)
@@ -342,7 +334,6 @@ app.get("/api/projects", (req, res) => {
   });
 });
 
-// 2. Tambah project baru
 app.post("/api/projects", upload.single("image"), (req, res) => {
   const { title, description } = req.body;
   const imageUrl = req.file ? req.file.filename : null;
@@ -363,7 +354,6 @@ app.post("/api/projects", upload.single("image"), (req, res) => {
   );
 });
 
-// 3. Hapus project
 app.delete("/api/projects/:id", (req, res) => {
   db.query("DELETE FROM projects WHERE id = ?", [req.params.id], (err) => {
     if (err)
@@ -373,26 +363,23 @@ app.delete("/api/projects/:id", (req, res) => {
 });
 
 // ==========================================
-// API CATALOG REQUESTS ✅ BARU
+// API CATALOG REQUESTS
 // ==========================================
 
-// 1. Simpan data form & trigger download katalog
 app.post("/api/catalog-requests", (req, res) => {
   const { name, email, message } = req.body;
 
   if (!name || !email || !message) {
-    return res.status(400).json({
-      success: false,
-      message: "Nama, email, dan pesan wajib diisi!",
-    });
+    return res
+      .status(400)
+      .json({ success: false, message: "Nama, email, dan pesan wajib diisi!" });
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return res.status(400).json({
-      success: false,
-      message: "Format email tidak valid!",
-    });
+    return res
+      .status(400)
+      .json({ success: false, message: "Format email tidak valid!" });
   }
 
   const sql = `INSERT INTO catalog_requests (name, email, message) VALUES (?, ?, ?)`;
@@ -400,10 +387,9 @@ app.post("/api/catalog-requests", (req, res) => {
   db.query(sql, [name.trim(), email.trim(), message.trim()], (err, result) => {
     if (err) {
       console.error("Error simpan catalog request:", err);
-      return res.status(500).json({
-        success: false,
-        message: "Gagal menyimpan data ke database.",
-      });
+      return res
+        .status(500)
+        .json({ success: false, message: "Gagal menyimpan data ke database." });
     }
     console.log(`📩 Catalog request baru dari: ${email}`);
     res.json({
@@ -414,23 +400,20 @@ app.post("/api/catalog-requests", (req, res) => {
   });
 });
 
-// 2. Ambil semua catalog requests (untuk Admin Panel)
 app.get("/api/catalog-requests", (req, res) => {
   const sql = "SELECT * FROM catalog_requests ORDER BY created_at DESC";
 
   db.query(sql, (err, results) => {
     if (err) {
       console.error("Error ambil catalog requests:", err);
-      return res.status(500).json({
-        success: false,
-        message: "Gagal mengambil data",
-      });
+      return res
+        .status(500)
+        .json({ success: false, message: "Gagal mengambil data" });
     }
     res.json({ success: true, data: results });
   });
 });
 
-// 3. Hapus satu catalog request (dari Admin Panel)
 app.delete("/api/catalog-requests/:id", (req, res) => {
   const { id } = req.params;
   const sql = "DELETE FROM catalog_requests WHERE id = ?";
@@ -438,23 +421,21 @@ app.delete("/api/catalog-requests/:id", (req, res) => {
   db.query(sql, [id], (err, result) => {
     if (err) {
       console.error("Error hapus catalog request:", err);
-      return res.status(500).json({
-        success: false,
-        message: "Gagal menghapus data",
-      });
+      return res
+        .status(500)
+        .json({ success: false, message: "Gagal menghapus data" });
     }
     if (result.affectedRows === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Data tidak ditemukan",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Data tidak ditemukan" });
     }
     res.json({ success: true, message: "Data berhasil dihapus!" });
   });
 });
 
 // ─── JALANKAN SERVER ──────────────────────────────────────────────────────────
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server Backend berjalan di http://localhost:${PORT}`);
+  console.log(`🚀 Server Backend berjalan di port ${PORT}`);
 });
