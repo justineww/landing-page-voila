@@ -7,6 +7,9 @@ import AboutSection from "../../components/home/AboutSection";
 import ProjectSection from "../../components/home/ProjectSection";
 import ContactSection from "../../components/home/ContactSection";
 
+// Ambil URL API dari file .env
+const API_BASE = process.env.REACT_APP_API_URL;
+
 const INITIAL_SLIDERS = {
   hero: [],
   categoryGallery: [],
@@ -31,39 +34,58 @@ const LandingPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Texts
-        const resTexts = await fetch("http://localhost:5000/api/home-contents");
+        // =========================
+        // Fetch Text Content
+        // =========================
+        const resTexts = await fetch(`${API_BASE}/api/home-contents`);
+
         const { success: okTexts, data: textData } = await resTexts.json();
+
         if (okTexts) {
           const textObj = {};
+
           textData.forEach(({ content_type, text_value }) => {
             textObj[content_type] = text_value;
           });
+
           setTexts(textObj);
         }
 
-        // Sliders
-        const resSliders = await fetch(
-          "http://localhost:5000/api/home-sliders",
-        );
+        // =========================
+        // Fetch Slider Data
+        // =========================
+        const resSliders = await fetch(`${API_BASE}/api/home-sliders`);
+
         const { success: okSliders, data: sliderData } =
           await resSliders.json();
+
         if (okSliders) {
           const sliderObj = { ...INITIAL_SLIDERS };
+
           sliderData.forEach((item) => {
             const key = SLIDER_TYPE_MAP[item.slider_type];
-            if (key) sliderObj[key].push(item);
+
+            if (key) {
+              sliderObj[key].push(item);
+            }
           });
+
           setSliders(sliderObj);
         }
 
-        // Projects
-        const resProjects = await fetch("http://localhost:5000/api/projects");
+        // =========================
+        // Fetch Projects
+        // =========================
+        const resProjects = await fetch(`${API_BASE}/api/projects`);
+
         const { success: okProjects, data: projectData } =
           await resProjects.json();
-        if (okProjects) setProjects(projectData);
+
+        if (okProjects) {
+          setProjects(projectData);
+        }
       } catch (err) {
-        console.error("Error fetching:", err);
+        console.error("Error fetching data:", err);
       }
     };
 
@@ -79,18 +101,25 @@ const LandingPage = () => {
         fontFamily: FONT,
       }}
     >
-      {/* marginBottom negatif untuk mendekatkan Hero ke Welcome */}
+      {/* Hero Section */}
       <div style={{ marginBottom: "-32px" }}>
         <HeroSection sliders={sliders} />
       </div>
 
+      {/* Welcome Section */}
       <WelcomeSection texts={texts} sliders={sliders} />
+
+      {/* About Section */}
       <AboutSection
         texts={texts}
         aboutGallery={sliders.aboutGallery}
         aboutSideImage={sliders.aboutSideImage}
       />
+
+      {/* Project Section */}
       <ProjectSection texts={texts} projects={projects} />
+
+      {/* Contact Section */}
       <ContactSection texts={texts} contactImage={sliders.contactImage} />
     </div>
   );
