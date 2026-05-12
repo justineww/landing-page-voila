@@ -433,7 +433,7 @@ app.delete("/api/catalog-requests/:id", (req, res) => {
 });
 
 // ─── JALANKAN SERVER ──────────────────────────────────────────────────────────
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3306;
 app.listen(PORT, () => {
   console.log(`🚀 Server Backend berjalan di port ${PORT}`);
 });
