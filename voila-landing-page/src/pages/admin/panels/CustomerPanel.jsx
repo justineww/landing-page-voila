@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+const API_BASE = process.env.REACT_APP_API_URL;
+
 const CustomerPanel = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
