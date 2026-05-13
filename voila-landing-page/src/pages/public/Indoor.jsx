@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../../components/Header";
 
-const API_BASE = process.env.REACT_APP_API_URL;
-const IMAGE_BASE_URL = `${API_BASE}/uploads/`;
+import { API_URL } from "../../constants/api";
+const IMAGE_BASE_URL = `${API_URL}/uploads/`;
 
 const Indoor = () => {
   const [products, setProducts] = useState([]);

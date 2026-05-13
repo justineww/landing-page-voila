@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../../components/Header";
 
-const API_BASE = process.env.REACT_APP_API_URL;
-const IMAGE_BASE_URL = `${API_BASE}/uploads/`;
+import { API_URL } from "../../constants/api";
+const IMAGE_BASE_URL = `${API_URL}/uploads/`;
 
 const Outdoor = () => {
   const [products, setProducts] = useState([]);
@@ -14,7 +14,7 @@ const Outdoor = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/products`);
+        const res = await fetch(`${API_URL}/api/products`);
         const data = await res.json();
         if (data.success) {
           const outdoorProducts = data.data.filter(
