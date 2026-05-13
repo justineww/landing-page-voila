@@ -8,6 +8,7 @@ import ProjectSection from "../../components/home/ProjectSection";
 import ContactSection from "../../components/home/ContactSection";
 
 const API_BASE = process.env.REACT_APP_API_URL;
+console.log("API_BASE:", API_BASE); // Tambahkan ini
 
 const INITIAL_SLIDERS = {
   hero: [],
