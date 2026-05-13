@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FONT } from "../../constants/home";
 
 import { API_URL } from "../../constants/api";
-const catalogPdfUrl = "../../storage/KatalogVoilaLiving2026.pdf";
+import catalogPdf from "../../storage/KatalogVoilaLiving2026.pdf";
 
 // FONT = "'Poppins', sans-serif" — dari constants/home, sama seperti WelcomeSection
 // Heading WelcomeSection tidak set fontFamily (bug: nilai clamp masuk ke fontFamily),
@@ -62,10 +62,7 @@ export default function Contact() {
       const data = await res.json();
       if (data.success) {
         setStatus("success");
-        const link = document.createElement("a");
-        link.href = catalogPdfUrl;
-        link.download = "Voila-Outdoor-Catalogue-2026.pdf";
-        link.click();
+        window.open(catalogPdf, "_blank");
       } else {
         setStatus("error");
       }
@@ -662,8 +659,9 @@ export default function Contact() {
                     Jika unduhan tidak dimulai, klik tombol di bawah.
                   </p>
                   <a
-                    href={catalogPdfUrl}
-                    download="Voila-Outdoor-Catalogue-2026.pdf"
+                    href={catalogPdf}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="download-btn"
                   >
                     <svg
