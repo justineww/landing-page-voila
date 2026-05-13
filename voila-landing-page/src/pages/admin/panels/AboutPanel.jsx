@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { API_URL } from "../../constants/api";
+import { API_URL } from "../../../constants/api";
 
 const AboutPanel = () => {
   const [aboutText, setAboutText] = useState("");

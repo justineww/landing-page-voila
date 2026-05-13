@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { API_URL } from "../../constants/api";
-
+import { API_URL } from "../../../constants/api";
 const ProductPanel = ({ category }) => {
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { API_URL } from "../../constants/api";
+import { API_URL } from "../../../constants/api";
 
 const CustomerPanel = () => {
   const [requests, setRequests] = useState([]);
