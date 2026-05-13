@@ -175,6 +175,7 @@ const HomePanel = () => {
   };
 
   useEffect(() => {
+    console.log("API_URL:", API_URL);
     fetchHomeContents();
     fetchSliders();
   }, []);
