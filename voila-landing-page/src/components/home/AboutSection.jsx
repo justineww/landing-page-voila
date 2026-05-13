@@ -6,11 +6,9 @@ const AboutSection = ({ texts, aboutGallery, aboutSideImage }) => {
 
   useEffect(() => {
     if (aboutSideImage.length <= 1) return;
-
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % aboutSideImage.length);
     }, 3500);
-
     return () => clearInterval(interval);
   }, [aboutSideImage.length]);
 
@@ -19,17 +17,11 @@ const AboutSection = ({ texts, aboutGallery, aboutSideImage }) => {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-        * {
-          font-family: 'Poppins', sans-serif !important;
-        }
+        * { font-family: 'Poppins', sans-serif !important; }
 
         @keyframes marquee-left {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
 
         .marquee-track {
@@ -37,10 +29,7 @@ const AboutSection = ({ texts, aboutGallery, aboutSideImage }) => {
           width: max-content;
           animation: marquee-left 22s linear infinite;
         }
-
-        .marquee-track:hover {
-          animation-play-state: paused;
-        }
+        .marquee-track:hover { animation-play-state: paused; }
 
         .about-slide {
           position: absolute;
@@ -50,26 +39,80 @@ const AboutSection = ({ texts, aboutGallery, aboutSideImage }) => {
           object-fit: cover;
         }
 
+        /* ── DESKTOP ── */
+        .about-wrapper {
+          display: flex;
+          min-height: 800px;
+          position: relative;
+        }
+
+        .about-left {
+          width: 52%;
+          padding: 80px 60px 280px 72px;
+          position: relative;
+          z-index: 3;
+          background: #FFFFFF;
+        }
+
+        .about-right {
+          width: 48%;
+          position: relative;
+          overflow: hidden;
+          min-height: 800px;
+          z-index: 6;
+        }
+
+        .gallery-floating {
+          position: absolute;
+          left: 0;
+          bottom: 200px;
+          width: 100%;
+          z-index: 4;
+          overflow: hidden;
+        }
+
+        /* ── TABLET ── */
         @media (max-width: 1024px) {
           .about-wrapper {
             flex-direction: column;
+            min-height: unset;
           }
 
-          .about-left,
+          .about-left {
+            width: 100%;
+            padding: 48px 32px 48px 32px;
+          }
+
           .about-right {
-            width: 100% !important;
+            width: 100%;
+            min-height: 340px;
+            height: 340px;
           }
 
           .gallery-floating {
-            position: relative !important;
-            width: 100% !important;
-            bottom: auto !important;
-            margin-top: -40px;
-            padding-bottom: 40px;
+            position: relative;
+            bottom: auto;
+            margin-top: 0;
+            padding: 24px 0;
           }
 
-          .center-fade {
-            display: none;
+          .center-fade { display: none; }
+        }
+
+        /* ── MOBILE ── */
+        @media (max-width: 640px) {
+          .about-left {
+            padding: 36px 20px 36px 20px;
+          }
+
+          .about-right {
+            min-height: 260px;
+            height: 260px;
+          }
+
+          .gallery-card {
+            width: 160px !important;
+            height: 120px !important;
           }
         }
       `}</style>
@@ -82,33 +125,16 @@ const AboutSection = ({ texts, aboutGallery, aboutSideImage }) => {
           position: "relative",
         }}
       >
-        <div
-          className="about-wrapper"
-          style={{
-            display: "flex",
-            minHeight: "800px",
-            position: "relative",
-          }}
-        >
+        <div className="about-wrapper">
           {/* LEFT CONTENT */}
-          <div
-            className="about-left"
-            style={{
-              width: "52%",
-              padding: "80px 60px 280px 72px",
-              position: "relative",
-              zIndex: 3,
-              background: "#FFFFFF",
-            }}
-          >
+          <div className="about-left">
             <h2
               style={{
                 color: "#7C7669",
-                fontSize: "clamp(2.6rem, 4vw, 4.2rem)",
+                fontSize: "clamp(2.2rem, 4vw, 4.2rem)",
                 fontWeight: "300",
                 letterSpacing: "0.06em",
                 marginBottom: "32px",
-                fontFamily: FONT,
                 lineHeight: 1.1,
               }}
             >
@@ -123,7 +149,6 @@ const AboutSection = ({ texts, aboutGallery, aboutSideImage }) => {
                 maxWidth: "600px",
                 textAlign: "justify",
                 fontWeight: "300",
-                fontFamily: FONT,
               }}
             >
               {texts.about_us || "Menunggu teks dari database..."}
@@ -131,16 +156,7 @@ const AboutSection = ({ texts, aboutGallery, aboutSideImage }) => {
           </div>
 
           {/* RIGHT IMAGE */}
-          <div
-            className="about-right"
-            style={{
-              width: "48%",
-              position: "relative",
-              overflow: "hidden",
-              minHeight: "800px",
-              zIndex: 6,
-            }}
-          >
+          <div className="about-right">
             {aboutSideImage.length > 0 ? (
               aboutSideImage.map((img, idx) => (
                 <img
@@ -167,14 +183,13 @@ const AboutSection = ({ texts, aboutGallery, aboutSideImage }) => {
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#999",
-                  fontFamily: FONT,
                 }}
               >
                 Upload About Image
               </div>
             )}
 
-            {/* FADE OVERLAY — fades from white on the left, transparent on the right */}
+            {/* Fade overlay — hanya di desktop (left fade) */}
             <div
               style={{
                 position: "absolute",
@@ -186,7 +201,7 @@ const AboutSection = ({ texts, aboutGallery, aboutSideImage }) => {
             />
           </div>
 
-          {/* CENTER FADE */}
+          {/* CENTER FADE — desktop only */}
           <div
             className="center-fade"
             style={{
@@ -203,24 +218,15 @@ const AboutSection = ({ texts, aboutGallery, aboutSideImage }) => {
             }}
           />
 
-          {/* FLOATING GALLERY — zIndex 4 agar berada di bawah foto kanan (zIndex 6) */}
-          <div
-            className="gallery-floating"
-            style={{
-              position: "absolute",
-              left: 0,
-              bottom: "200px",
-              width: "100%",
-              zIndex: 4,
-              overflow: "hidden",
-            }}
-          >
+          {/* FLOATING GALLERY */}
+          <div className="gallery-floating">
             {aboutGallery.length > 0 ? (
               <div style={{ overflow: "hidden" }}>
                 <div className="marquee-track">
                   {[...aboutGallery, ...aboutGallery].map((img, idx) => (
                     <div
                       key={idx}
+                      className="gallery-card"
                       style={{
                         width: "210px",
                         height: "160px",
@@ -252,12 +258,11 @@ const AboutSection = ({ texts, aboutGallery, aboutSideImage }) => {
                   height: "160px",
                   background: "#EAE4DC",
                   borderRadius: "20px",
-                  marginLeft: "24px",
+                  margin: "0 24px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#AAA",
-                  fontFamily: FONT,
                 }}
               >
                 Upload About Gallery
