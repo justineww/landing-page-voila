@@ -8,12 +8,14 @@ const path = require("path");
 const app = express();
 
 // ─── MIDDLEWARE ───────────────────────────────────────────────────────────────
-app.use(cors({
-  origin: process.env.FRONTEND_URL || "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }),
+);
 app.use(bodyParser.json());
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
@@ -437,7 +439,7 @@ app.delete("/api/catalog-requests/:id", (req, res) => {
   });
 });
 
-// ─── JALANKAN SERVER ──────────────────────────────────────────────────────────
+// ─── JALANKAN SERVER ──────────────────────────────────────────────────────────----
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`🚀 Server Backend berjalan di port ${PORT}`);
