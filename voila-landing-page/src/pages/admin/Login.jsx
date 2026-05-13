@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-const API_BASE = "https://hospitable-emotion-production-34cc.up.railway.app";
+import { API_URL } from "../../constants/api";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -13,7 +13,7 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await fetch(`${API_BASE}/api/login`, {
+      const response = await fetch(`${API_URL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
