@@ -7,7 +7,8 @@ import AboutSection from "../../components/home/AboutSection";
 import ProjectSection from "../../components/home/ProjectSection";
 import ContactSection from "../../components/home/ContactSection";
 
-import { API_URL as API_BASE } from "../../constants/api";
+// Ganti baris import API_URL
+const API_BASE = "https://hospitable-emotion-production-34cc.up.railway.app";
 console.log("API_BASE:", API_BASE); // Tambahkan ini
 
 const INITIAL_SLIDERS = {
