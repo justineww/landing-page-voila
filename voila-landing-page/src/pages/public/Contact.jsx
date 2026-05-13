@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FONT } from "../../constants/home";
 
 import { API_URL } from "../../constants/api";
-const catalogPdfUrl = "../storage/KatalogVoilaLiving2026.pdf";
+const catalogPdfUrl = "../../storage/KatalogVoilaLiving2026.pdf";
 
 // FONT = "'Poppins', sans-serif" — dari constants/home, sama seperti WelcomeSection
 // Heading WelcomeSection tidak set fontFamily (bug: nilai clamp masuk ke fontFamily),
