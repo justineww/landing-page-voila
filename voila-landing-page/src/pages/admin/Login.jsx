@@ -30,7 +30,7 @@ const Login = () => {
         setError(data.message);
       }
     } catch (err) {
-      console.log("API_BASE:", API_BASE);
+      console.log("API_URL:", API_URL);
       setError("Gagal menyambung ke server. Pastikan backend menyala.");
     }
   };

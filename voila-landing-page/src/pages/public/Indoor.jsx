@@ -14,7 +14,7 @@ const Indoor = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/products`);
+        const res = await fetch(`${API_URL}/api/products`);
         const data = await res.json();
         if (data.success) {
           const indoorProducts = data.data.filter(

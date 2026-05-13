@@ -22,7 +22,7 @@ const ProjectPanel = () => {
   const fetchData = async () => {
     try {
       // Fetch Teks & Statistik
-      const resTexts = await fetch(`${API_BASE}/api/home-contents`);
+      const resTexts = await fetch(`${API_URL}/api/home-contents`);
       const dataTexts = await resTexts.json();
       if (dataTexts.success) {
         const textObj = {};
@@ -35,7 +35,7 @@ const ProjectPanel = () => {
       }
 
       // Fetch Projects Gallery
-      const resProj = await fetch(`${API_BASE}/api/projects`);
+      const resProj = await fetch(`${API_URL}/api/projects`);
       const dataProj = await resProj.json();
       if (dataProj.success) setProjects(dataProj.data);
     } catch (error) {
@@ -54,7 +54,7 @@ const ProjectPanel = () => {
     data.append("content_type", type);
     data.append("text_value", texts[type]);
 
-    const res = await fetch(`${API_BASE}/api/home-contents/update`, {
+    const res = await fetch(`${API_URL}/api/home-contents/update`, {
       method: "POST",
       body: data,
     });
@@ -77,7 +77,7 @@ const ProjectPanel = () => {
     data.append("title", newProject.title);
     data.append("description", newProject.description);
 
-    const res = await fetch(`${API_BASE}/api/projects`, {
+    const res = await fetch(`${API_URL}/api/projects`, {
       method: "POST",
       body: data,
     });
@@ -94,7 +94,7 @@ const ProjectPanel = () => {
   // Hapus Project
   const handleDeleteProject = async (id) => {
     if (!window.confirm("Hapus project ini?")) return;
-    const res = await fetch(`${API_BASE}/api/projects/${id}`, {
+    const res = await fetch(`${API_URL}/api/projects/${id}`, {
       method: "DELETE",
     });
     const result = await res.json();
@@ -272,7 +272,7 @@ const ProjectPanel = () => {
               className="border rounded-lg overflow-hidden relative shadow-sm group"
             >
               <img
-                src={`${API_BASE}/uploads/${proj.image_url}`}
+                src={`${API_URL}/uploads/${proj.image_url}`}
                 className="w-full h-48 object-cover"
                 alt={proj.title}
               />

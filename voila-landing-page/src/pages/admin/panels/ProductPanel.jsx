@@ -32,7 +32,7 @@ const ProductPanel = ({ category }) => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/products`);
+      const response = await fetch(`${API_URL}/api/products`);
       const result = await response.json();
       if (result.success) {
         setProducts(result.data);
@@ -68,7 +68,7 @@ const ProductPanel = ({ category }) => {
     data.append("image", formData.image);
 
     try {
-      const response = await fetch(`${API_BASE}/api/products`, {
+      const response = await fetch(`${API_URL}/api/products`, {
         method: "POST",
         body: data,
       });
@@ -130,7 +130,7 @@ const ProductPanel = ({ category }) => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/api/products/${editData.id}`, {
+      const response = await fetch(`${API_URL}/api/products/${editData.id}`, {
         method: "PUT",
         body: data,
       });
@@ -168,7 +168,7 @@ const ProductPanel = ({ category }) => {
 
     try {
       const response = await fetch(
-        `${API_BASE}/api/products/${deleteTarget.id}`,
+        `${API_URL}/api/products/${deleteTarget.id}`,
         { method: "DELETE" },
       );
       const result = await response.json();
@@ -342,7 +342,7 @@ const ProductPanel = ({ category }) => {
                     <td className="p-4 text-sm text-gray-500">#{item.id}</td>
                     <td className="p-4">
                       <img
-                        src={`${API_BASE}/uploads/${item.image_url}`}
+                        src={`${API_URL}/uploads/${item.image_url}`}
                         alt={item.title}
                         className="w-16 h-16 object-cover rounded border border-gray-200 shadow-sm"
                       />
@@ -495,7 +495,7 @@ const ProductPanel = ({ category }) => {
                     src={
                       editImage
                         ? URL.createObjectURL(editImage)
-                        : `${API_BASE}/uploads/${editData.image_url}`
+                        : `${API_URL}/uploads/${editData.image_url}`
                     }
                     alt="preview"
                     className="w-24 h-24 object-cover rounded border border-gray-200 shadow-sm"
