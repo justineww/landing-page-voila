@@ -7,7 +7,6 @@ import AboutSection from "../../components/home/AboutSection";
 import ProjectSection from "../../components/home/ProjectSection";
 import ContactSection from "../../components/home/ContactSection";
 
-// Ambil URL API dari file .env
 const API_BASE = process.env.REACT_APP_API_URL;
 
 const INITIAL_SLIDERS = {
@@ -38,16 +37,16 @@ const LandingPage = () => {
         // Fetch Text Content
         // =========================
         const resTexts = await fetch(`${API_BASE}/api/home-contents`);
+        if (!resTexts.ok)
+          throw new Error(`home-contents gagal: ${resTexts.status}`);
 
         const { success: okTexts, data: textData } = await resTexts.json();
 
         if (okTexts) {
           const textObj = {};
-
           textData.forEach(({ content_type, text_value }) => {
             textObj[content_type] = text_value;
           });
-
           setTexts(textObj);
         }
 
@@ -55,21 +54,18 @@ const LandingPage = () => {
         // Fetch Slider Data
         // =========================
         const resSliders = await fetch(`${API_BASE}/api/home-sliders`);
+        if (!resSliders.ok)
+          throw new Error(`home-sliders gagal: ${resSliders.status}`);
 
         const { success: okSliders, data: sliderData } =
           await resSliders.json();
 
         if (okSliders) {
           const sliderObj = { ...INITIAL_SLIDERS };
-
           sliderData.forEach((item) => {
             const key = SLIDER_TYPE_MAP[item.slider_type];
-
-            if (key) {
-              sliderObj[key].push(item);
-            }
+            if (key) sliderObj[key].push(item);
           });
-
           setSliders(sliderObj);
         }
 
@@ -77,6 +73,8 @@ const LandingPage = () => {
         // Fetch Projects
         // =========================
         const resProjects = await fetch(`${API_BASE}/api/projects`);
+        if (!resProjects.ok)
+          throw new Error(`projects gagal: ${resProjects.status}`);
 
         const { success: okProjects, data: projectData } =
           await resProjects.json();
@@ -85,7 +83,7 @@ const LandingPage = () => {
           setProjects(projectData);
         }
       } catch (err) {
-        console.error("Error fetching data:", err);
+        console.error("Error fetching data:", err.message);
       }
     };
 
@@ -101,25 +99,20 @@ const LandingPage = () => {
         fontFamily: FONT,
       }}
     >
-      {/* Hero Section */}
       <div style={{ marginBottom: "-32px" }}>
         <HeroSection sliders={sliders} />
       </div>
 
-      {/* Welcome Section */}
       <WelcomeSection texts={texts} sliders={sliders} />
 
-      {/* About Section */}
       <AboutSection
         texts={texts}
         aboutGallery={sliders.aboutGallery}
         aboutSideImage={sliders.aboutSideImage}
       />
 
-      {/* Project Section */}
       <ProjectSection texts={texts} projects={projects} />
 
-      {/* Contact Section */}
       <ContactSection texts={texts} contactImage={sliders.contactImage} />
     </div>
   );
