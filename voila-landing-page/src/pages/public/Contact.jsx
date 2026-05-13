@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FONT } from "../../constants/home";
 
+const API_BASE = process.env.REACT_APP_API_URL;
 const catalogPdfUrl = "/catalogue/outdoor-catalogue-2026.pdf";
 
 // FONT = "'Poppins', sans-serif" — dari constants/home, sama seperti WelcomeSection
