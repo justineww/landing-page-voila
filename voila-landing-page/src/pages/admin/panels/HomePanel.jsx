@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import { API_URL } from "../../constants/api";
+import { API_URL } from "../../../constants/api";
 
 const HomePanel = () => {
   // ==========================================
@@ -18,7 +18,7 @@ const HomePanel = () => {
 
   const fetchHomeContents = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/home-contents`);
+      const response = await fetch(`${API_URL}/api/home-contents`);
       const result = await response.json();
       if (result.success) {
         const texts = { welcome_heading: "", welcome_paragraph: "" };
@@ -58,7 +58,7 @@ const HomePanel = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/api/home-contents/update`, {
+      const response = await fetch(`${API_URL}/api/home-contents/update`, {
         method: "POST",
         body: data,
       });
@@ -86,7 +86,7 @@ const HomePanel = () => {
 
   const fetchSliders = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/home-sliders`);
+      const response = await fetch(`${API_URL}/api/home-sliders`);
       const result = await response.json();
       if (result.success) setSliders(result.data);
     } catch (error) {
@@ -108,7 +108,7 @@ const HomePanel = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/api/home-sliders`, {
+      const response = await fetch(`${API_URL}/api/home-sliders`, {
         method: "POST",
         body: data,
       });
@@ -128,7 +128,7 @@ const HomePanel = () => {
   const handleDeleteSlider = async (id) => {
     if (!window.confirm("Yakin ingin menghapus gambar ini?")) return;
     try {
-      const response = await fetch(`${API_BASE}/api/home-sliders/${id}`, {
+      const response = await fetch(`${API_URL}/api/home-sliders/${id}`, {
         method: "DELETE",
       });
       const result = await response.json();
@@ -164,7 +164,7 @@ const HomePanel = () => {
     }));
 
     try {
-      await fetch(`${API_BASE}/api/home-sliders/reorder`, {
+      await fetch(`${API_URL}/api/home-sliders/reorder`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reorderedItems: reorderedData }),
@@ -235,7 +235,7 @@ const HomePanel = () => {
                 className="relative group cursor-move hover:scale-[1.02] transition-transform"
               >
                 <img
-                  src={`${API_BASE}/uploads/${item.image_url}`}
+                  src={`${API_URL}/uploads/${item.image_url}`}
                   alt="Banner"
                   className="w-full h-32 object-cover rounded border"
                 />
@@ -361,7 +361,7 @@ const HomePanel = () => {
                 className="relative group cursor-move hover:scale-[1.02] transition-transform"
               >
                 <img
-                  src={`${API_BASE}/uploads/${item.image_url}`}
+                  src={`${API_URL}/uploads/${item.image_url}`}
                   alt="Side"
                   className="w-full h-32 object-contain bg-gray-50 rounded border"
                 />
