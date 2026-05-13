@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-const API_BASE = process.env.REACT_APP_API_URL;
+const API_BASE = "https://hospitable-emotion-production-34cc.up.railway.app";
 
 const Login = () => {
   const [username, setUsername] = useState("");
