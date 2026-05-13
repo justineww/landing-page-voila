@@ -7,7 +7,7 @@ import AboutSection from "../../components/home/AboutSection";
 import ProjectSection from "../../components/home/ProjectSection";
 import ContactSection from "../../components/home/ContactSection";
 
-const API_BASE = process.env.REACT_APP_API_URL;
+import { API_URL as API_BASE } from "../../constants/api";
 console.log("API_BASE:", API_BASE); // Tambahkan ini
 
 const INITIAL_SLIDERS = {
