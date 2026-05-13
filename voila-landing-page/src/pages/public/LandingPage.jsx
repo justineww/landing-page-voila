@@ -8,8 +8,8 @@ import ProjectSection from "../../components/home/ProjectSection";
 import ContactSection from "../../components/home/ContactSection";
 
 // Ganti baris import API_URL
-const API_BASE = "https://hospitable-emotion-production-34cc.up.railway.app";
-console.log("API_BASE:", API_BASE); // Tambahkan ini
+import { API_URL } from "../../constants/api";
+console.log("API_BASE:", API_URL); // Tambahkan ini
 
 const INITIAL_SLIDERS = {
   hero: [],
@@ -38,7 +38,7 @@ const LandingPage = () => {
         // =========================
         // Fetch Text Content
         // =========================
-        const resTexts = await fetch(`${API_BASE}/api/home-contents`);
+        const resTexts = await fetch(`${API_URL}/api/home-contents`);
         if (!resTexts.ok)
           throw new Error(`home-contents gagal: ${resTexts.status}`);
 
@@ -55,7 +55,7 @@ const LandingPage = () => {
         // =========================
         // Fetch Slider Data
         // =========================
-        const resSliders = await fetch(`${API_BASE}/api/home-sliders`);
+        const resSliders = await fetch(`${API_URL}/api/home-sliders`);
         if (!resSliders.ok)
           throw new Error(`home-sliders gagal: ${resSliders.status}`);
 
@@ -74,7 +74,7 @@ const LandingPage = () => {
         // =========================
         // Fetch Projects
         // =========================
-        const resProjects = await fetch(`${API_BASE}/api/projects`);
+        const resProjects = await fetch(`${API_URL}/api/projects`);
         if (!resProjects.ok)
           throw new Error(`projects gagal: ${resProjects.status}`);
 
