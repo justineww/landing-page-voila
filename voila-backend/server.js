@@ -8,7 +8,15 @@ const path = require("path");
 const app = express();
 
 // ─── MIDDLEWARE ───────────────────────────────────────────────────────────────
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }),
+);
+app.options("*", cors());
 app.use(bodyParser.json());
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
