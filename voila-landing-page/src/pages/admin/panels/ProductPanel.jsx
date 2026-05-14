@@ -25,9 +25,9 @@ const ProductPanel = ({ category }) => {
   const [loading, setLoading] = useState(false);
 
   const subCategoryOptions = {
-    Indoor: ["Kursi", "Meja", "Sofa", "Lemari"],
-    Outdoor: ["Kursi Taman", "Meja Teras", "Ayunan"],
-    Craft: ["Patung Kayu", "Hiasan Dinding", "Lampu Hias"],
+    Indoor: ["Bar Chair", "Dining Table"],
+    Outdoor: ["Outdoor Chair", "Outdoor Sofa"],
+    Craft: ["Craft Table", "Craft Cabinet"],
   };
 
   const fetchProducts = async () => {
