@@ -627,7 +627,7 @@ export default function Contact() {
               </div>
               <div className="catalogue-info">
                 <p>Tersedia</p>
-                <strong>Outdoor Catalogue 2026</strong>
+                <strong>Catalogue 2026</strong>
               </div>
             </div>
           </div>
