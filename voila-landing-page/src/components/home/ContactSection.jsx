@@ -332,7 +332,7 @@ const ContactSection = ({ texts, contactImage }) => {
           <div style={{ height: mapHeight, overflow: "hidden" }}>
             <iframe
               title="Voila Living Location"
-              src="https://maps.google.com/maps?q=Sekarpetak+RT.02+Bangunjiwo+Kasihan+Bantul+Yogyakarta&output=embed"
+              src="https://maps.google.com/maps?q=VOILA%20LIVING%20%2F%20TEAK%20IS%20BEAUTIFUL%2C%20Sekarpetak%20RT.02%20Bangunjiwo%20Kasihan%20Bantul%20Yogyakarta&output=embed"
               width="100%"
               height="100%"
               style={{ border: 0, display: "block" }}

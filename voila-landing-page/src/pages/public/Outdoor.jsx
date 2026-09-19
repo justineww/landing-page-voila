@@ -115,7 +115,7 @@ const Outdoor = () => {
                       letterSpacing: "-0.01em",
                     }}
                   >
-                    Outdoor{" "}
+                    {" "}
                   </span>
                   <span
                     style={{

@@ -53,7 +53,7 @@ const Header = () => {
           <img
             src={VoilaHorizontal}
             alt="Indonesian Legal Wood"
-            className="w-48 h-auto"
+            className="w-24 h-auto"
             onError={(e) => {
               e.target.style.display = "none";
               e.target.nextSibling.style.display = "flex";
